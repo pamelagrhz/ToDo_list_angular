@@ -1,1 +1,15 @@
-<router-outlet></router-outlet>
+<div class="container">
+  <div class="text-center">
+    <h1>Todo List</h1>
+  </div>
+  <div class="row">
+    <div class="col text-center">
+      <div class="btn-group btn-group-lg " role="group" >
+        <a  class="btn btn-light"[routerLink]="['/login']" routerLinkActive="active">Login</a>
+        <a  class="btn btn-light"[routerLink]="['/signup']" routerLinkActive="active">Signup</a>
+      </div>
+    </div>
+  </div>
+  <router-outlet></router-outlet>
+  <p>Este es un parrafo</p>
+</div>
