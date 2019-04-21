@@ -2,6 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { template } from '@angular/core/src/render3';
+import { CustomAlert } from 'src/app/models/alert';
 
 
 @Component({
@@ -15,6 +16,14 @@ export class AlertModalComponent implements OnInit {
   modalRef: BsModalRef;
   modalTitle: string;
   modalBody: string;
+  alertInfo: CustomAlert = {
+    acceptButtonText: 'Aceptar',
+    cancelButton: false,
+    cancelButtonText: 'Cancelar',
+    body: '',
+    title: 'Alert!',
+    type: "success"
+  };
 
   constructor(
     private modalService: BsModalService,
@@ -24,8 +33,16 @@ export class AlertModalComponent implements OnInit {
   ngOnInit() {
     this.alertService.alertSubject
       .subscribe((obj) => {
-        this.modalTitle = obj.title;
-        this.modalBody = obj.body;
+        /*  this.modalTitle = obj.title;
+         this.modalBody = obj.body; */
+        this.alertInfo = Object.assign(<CustomAlert>{
+          acceptButtonText: 'Aceptar',
+          cancelButton: false,
+          cancelButtonText: 'Cancelar',
+          body: '',
+          title: 'Alert!',
+          type: "success"
+        }, obj);
         this.openModal(this.template);
       })
   }

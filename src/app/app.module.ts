@@ -1,8 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {fas} from '@fortawesome/free-solid-svg-icons';
+import{ ReactiveFormsModule, FormsModule }from '@angular/forms'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,7 +19,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FontAwesomeModule,
+    ReactiveFormsModule,
+    FormsModule,
     SharedModule
     
   ],
@@ -29,7 +28,5 @@ import { SharedModule } from 'src/app/shared/shared.module';
   bootstrap: [AppComponent]
 })
 export class AppModule { 
-  constructor(){
-    library.add(fas);//para agregar un paquete de iconos 
-  }
+  
 }
