@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { HomeComponent } from './home/home.component';
 
 
 
@@ -15,6 +16,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     AppComponent,
     LoginComponent,
     SignupComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,

@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiURL:'http://165.22.149.77/api/v1'
+  apiURL:'https://apichidalida.tk/api/v1'
 };
 
 /*

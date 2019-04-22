@@ -5,6 +5,8 @@ import { FormGroup, FormBuilder, Validators, AbstractControl, AsyncValidatorFn }
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { User } from 'src/app/models/user';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -20,26 +22,31 @@ export class SignupComponent implements OnInit {
   signupForm: FormGroup
   submittedForm: boolean = false;
   errorMessage: string = '';
-  /* firstStatus: boolean=false;
-  firstStatus2: boolean=false; */
+
   passText: string = 'contraseña';
   constructor(
     private alertService: AlertService,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
 
   }
 
   ngOnInit() {
+    
     this.buildForm();
+    if(this.authService.isAuthenticated()){
+      this.router.navigate(['/home']);
+      return;
+    }
   }
   buildForm() {
     this.signupForm = this.fb.group({
       firstName: ['', [Validators.required]],//campo será requerido
       lastName: ['', [Validators.required]],
       secondLastName: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email, Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)]],
+      email: ['', [Validators.required, Validators.email, Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)], this.checkValidEmail()],
       username: ['', [Validators.required], this.checkValidUsername()],
       passwords: this.fb.group({
         psw: ['', [Validators.required]],
@@ -74,6 +81,18 @@ export class SignupComponent implements OnInit {
 
   }
 
+  checkValidEmail(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<any> => {
+      return this.authService.findEmail(control.value)
+        .pipe(
+          map((res: any) => {
+            return res.email ? { emailExists: true } : null
+          })
+        )
+    }
+
+  }
+
 
   getIcon(value: boolean): string {
     if (value) {
@@ -96,16 +115,34 @@ export class SignupComponent implements OnInit {
       title: 'Alert!',
       body: 'Are you sure?',
       cancelButton: true
-    });
-    let user=this.signupForm.value;
-    this.authService.signup(user)
-    .subscribe((res)=>{
-      console.log(res);
-      console.log("registro exitoso");
-    },(err)=>{
-      console.log(err);
-      console.log("registro fallido");
+    }).then((result) => {
+      let user: User = this.signupForm.value;
+      user.password = this.signupForm.value.passwords.psw;
+
+      if (result.action === 'accept') {
+        this.authService.signup(user)
+          .subscribe((res) => {
+            this.authService.setAuthToken(res);
+
+            this.authService.getAuth()
+              .subscribe((authUser) => {
+                this.authService.serAuthUser(authUser);
+                this.router.navigate(['/home'])
+              })
+            console.log(res);
+            console.log("registro exitoso");
+          }, (err) => {
+            console.log(err);
+            console.log("registro fallido");
+            this.alertService.show({
+              body: err.error.message ||err.message
+            });
+          })
+      }
+
+
     })
+
   }
 
 }
